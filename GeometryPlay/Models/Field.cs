@@ -6,45 +6,21 @@ namespace Geometry.Models
 {
     class Field
     {
-        private Player playerTurn;
-        private int countOfSteps;
-        private char[,] fieldArray;
         private int width;
         private int height;
 
-        public int CountOfSteps
-        {
-            get 
-            { 
-                return countOfSteps; 
-            }
+        public int CountOfSteps { get; set; }
+        public char[,] FieldArray { get; set; }
 
-            set 
-            {
-                    countOfSteps = value;
-            }
-        }
-        public char[,] FieldArray
-        {
-            get 
-            { 
-                return fieldArray; 
-            }
-            set 
-            { 
-                fieldArray = value; 
-            }
-        }
-
-        public int Height
+        public int Width
         {
             get 
             {
-                return width; 
+                return width;
             }
             set 
             {
-                if (value < 10)
+                if (value < 20)
                 {
                     throw new ArgumentException("Ширина не может быть меньше 20.");
                 }
@@ -55,7 +31,7 @@ namespace Geometry.Models
             }
         }
 
-        public int Width
+        public int Height
         {
             get 
             {
@@ -63,7 +39,7 @@ namespace Geometry.Models
             }
             set 
             { 
-                if(value < 20)
+                if(value < 30)
                 {
                     throw new ArgumentException("Высота не может быть меньше 30.");
                 }
@@ -74,57 +50,32 @@ namespace Geometry.Models
             }
         }
 
-        public Player PlayerTurn
+        public Player PlayerTurn { get; set; }
+
+        public void SetArraySize()
         {
-            get 
-            { 
-                return playerTurn; 
-            }
-            set
-            {
-                playerTurn = value;
-            }
+            FieldArray = new char[height, Width];
         }
 
         public void FillEmptyArray()
         {
-            for (int i = 0; i < fieldArray.GetLength(0); i++)
+            for (var i = 0; i < FieldArray.GetLength(0); i++)
             {
-                for (int j = 0; j < fieldArray.GetLength(1); j++)
+                for (var j = 0; j < FieldArray.GetLength(1); j++)
                 {
-                    fieldArray[i, j] = '-';
+                    FieldArray[i, j] = '-';
                 }
             }
         }
 
-        public int GetCountOfChars(char symbol)
-        {
-            int count = 0;
-            for (int i = 0; i<width; i++)
-            {
-                for(int j = 0; j < height; j++)
-                {
-                    if (fieldArray[j, i] == symbol)
-                    {
-                        count++;
-                    }
-                }
-            }
-
-            return count;
-        }
         public int GetMinCountOfSteps()
         {
             const int minSteps = 20;
             return minSteps * width * height / 600;
         }
 
-        public void SetArraySize()
-        {
-            fieldArray = new char[height, Height];
-        }
 
-        public void EnterStartCountOfSteps(int count)
+        public void SetStartCountOfSteps(int count)
         {
             if (count < GetMinCountOfSteps())
             {
@@ -132,61 +83,37 @@ namespace Geometry.Models
             }
             else
             {
-                countOfSteps = count;
+                CountOfSteps = count;
             }
         }
 
-        public void FillStepOfPlayer()
-        {
-            int extremeRightPosition = playerTurn.CoordinateWidth + playerTurn.RollWidth;
-            int extremeDownPosition = playerTurn.CoordinateHight + playerTurn.RollHight;
-
-            if (extremeRightPosition > width || extremeDownPosition > height)
-            {
-                throw new ArgumentOutOfRangeException("Фигура вышла за поле игры.");
-            }
-
-            char[,] temp = CopyArray();
-            for (int i = playerTurn.CoordinateWidth; i < extremeRightPosition; i++)
-            {
-                for (int j = playerTurn.CoordinateHight; j < extremeDownPosition; j++)
-                {
-                    if (temp[j, i] != '-')
-                    {
-                        throw new ArgumentException("Позиция занята.");
-                    }
-                    else
-                    {
-                        temp[j, i] = playerTurn.Symbol;
-                    }
-                }
-            }
-            countOfSteps--;
-            fieldArray = temp;
-        }
-
-        public char[,] CopyArray()
+        public char[,] GetArrayCopy()
         {
             char[,] copyArray = new char[height, width];
-            for (int i = 0; i < fieldArray.GetLength(0); i++)
-                for (int j = 0; j < fieldArray.GetLength(1); j++)
-                    copyArray[i, j] = fieldArray[i, j];
+            for (var i = 0; i < FieldArray.GetLength(0); i++)
+            {
+                for (var j = 0; j < FieldArray.GetLength(1); j++)
+                {
+                    copyArray[i, j] = FieldArray[i, j];
+                }
+            }
+
             return copyArray;
         }
 
-        public bool IsTherePlaceInField()
+        public bool HavePlaceBool()
         {
             bool result = false;
-            for (int j = 0; j <= width - playerTurn.RollWidth; j++)
+            for (var j = 0; j <= width - PlayerTurn.RollWidth; j++)
             {
-                for (int i = 0; i <= height - playerTurn.RollHight; i++)
+                for (var i = 0; i <= height - PlayerTurn.RollHight; i++)
                 {
-                    if(fieldArray[i,j] == '-')
+                    if (FieldArray[i, j] == '-')
                     {
-                        result = IsFillStepOfPlayer(j, i);
+                        result = IsFillPlaceBool(j, i);
                     }
 
-                    if (result == true)
+                    if (result)
                     {
                         return true;
                     }
@@ -195,24 +122,71 @@ namespace Geometry.Models
 
             return result;
         }
-        public bool IsFillStepOfPlayer(int coordinateWidth, int coordinateHight)
-        {
-            int extremeRightPosition = coordinateWidth + playerTurn.RollWidth;
-            int extremeDownPosition = coordinateHight + playerTurn.RollHight;
 
-            char[,] temp = FieldArray;
-            for (int i = coordinateWidth; i < extremeRightPosition; i++)
+        private bool IsFillPlaceBool(int coordinateWidth, int coordinateHight)
+        {
+            int extremeRightPosition = coordinateWidth + PlayerTurn.RollWidth;
+            int extremeDownPosition = coordinateHight + PlayerTurn.RollHight;
+
+            for (var i = coordinateWidth; i < extremeRightPosition; i++)
             {
-                for (int j = coordinateHight; j < extremeDownPosition; j++)
+                for (var j = coordinateHight; j < extremeDownPosition; j++)
                 {
-                    if (temp[j,i] != '-')
+                    if (FieldArray[j, i] != '-')
                     {
-                         return false;
+                        return false;
                     }
                 }
             }
 
             return true;
+        }
+
+        public void FillStepOfPlayer()
+        {
+            int extremeRightPosition = PlayerTurn.CoordinateHeight + PlayerTurn.RollWidth;
+            int extremeDownPosition = PlayerTurn.CoordinateWidth + PlayerTurn.RollHight;
+
+            if (extremeRightPosition > width || extremeDownPosition > height)
+            {
+                throw new ArgumentOutOfRangeException("Фигура вышла за поле игры.");
+            }
+
+            char[,] temp = GetArrayCopy();
+            for (var i = PlayerTurn.CoordinateHeight; i < extremeRightPosition; i++)
+            {
+                for (var j = PlayerTurn.CoordinateWidth; j < extremeDownPosition; j++)
+                {
+                    if (temp[j, i] != '-')
+                    {
+                        throw new ArgumentException("Позиция занята.");
+                    }
+                    else
+                    {
+                        temp[j, i] = PlayerTurn.Symbol;
+                    }
+                }
+            }
+
+            CountOfSteps--;
+            FieldArray = temp;
+        }
+
+        public int GetCountOfChars(char symbol)
+        {
+            int count = 0;
+            for (var i = 0; i < width; i++)
+            {
+                for (var j = 0; j < height; j++)
+                {
+                    if (FieldArray[j, i] == symbol)
+                    {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
         }
     }
 }

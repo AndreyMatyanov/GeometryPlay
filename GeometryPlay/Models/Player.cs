@@ -6,26 +6,23 @@ namespace Geometry.Models
 {
     internal class Player
     {
-        private int countOfSteps;
         private string nickname;
-        private char symbol;
+        private readonly char symbol;
         private int rollHeight;
         private int rollWidth;
         private int coordinateHeight;
         private int coordinateWidth;
         readonly Random rollRandom = new Random();
-        private bool isPlayerTurn;
-        private bool isReRolling;
 
         public Player(char symbol)
         {
             this.symbol = symbol;
         }
-        public int CoordinateWidth
+        public int CoordinateHeight
         {
             get 
-            { 
-                return coordinateHeight; 
+            {
+                return coordinateHeight;
             }
             set 
             {
@@ -40,7 +37,7 @@ namespace Geometry.Models
             }
         }
 
-        public int CoordinateHight
+        public int CoordinateWidth
         {
             get
             {
@@ -59,41 +56,11 @@ namespace Geometry.Models
             }
         }
 
-        public int CountOfSteps 
-        { 
-            get 
-            { 
-                return countOfSteps; 
-            }
-            set 
-            { 
-                countOfSteps = value; 
-            } 
-        }
+        public int CountOfSteps { get; set; }
 
-        public bool IsPlayerTurn
-        {
-            get 
-            { 
-                return isPlayerTurn; 
-            }
-            set 
-            { 
-                isPlayerTurn = value; 
-            }
-        }
+        public bool IsPlayerTurn { get; set; }
 
-        public bool IsRerolling
-        {
-            get
-            {
-                return isReRolling;
-            }
-            set
-            {
-                isReRolling = value;
-            }
-        }
+        public bool IsRerolling { get; set; }
 
         public string Nickname
         {
@@ -114,20 +81,11 @@ namespace Geometry.Models
             }
         }
 
-        public int RollWidth
-        {
-            get { return rollHeight; }
-        }
+        public int RollWidth => rollHeight;
 
-        public int RollHight
-        {
-            get { return rollWidth; }
-        }
+        public int RollHight => rollWidth;
 
-        public char Symbol
-        {
-            get { return symbol; }
-        }
+        public char Symbol => symbol;
 
         public void RollDice()
         {

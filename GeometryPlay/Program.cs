@@ -4,7 +4,7 @@ using System;
 
 namespace GeometryPlay
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {

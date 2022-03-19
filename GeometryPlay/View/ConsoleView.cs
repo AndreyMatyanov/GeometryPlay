@@ -57,6 +57,7 @@ namespace GeometryPlay.View
             Console.WriteLine("\t\tДобро пожаловать в игру GEOMETRY.\n\n" +
                 "Игра предназначена для игры вдвоём\n\n" +
                 "Нажмите любую клавишу, чтобы продолжить.\n\n");
+            Console.ReadKey();
         }
 
         public void ShowErrorMessage(string message)
@@ -76,7 +77,7 @@ namespace GeometryPlay.View
             for (int i = 0; i < field.GetLength(0); i++)
             {
                 Console.Write($"{i + 1}\t");
-                for (int j = 0; j < field.GetLength(1); j++)
+                for (var j = 0; j < field.GetLength(1); j++)
                 {
                     if (j > 9)
                     {
@@ -109,9 +110,9 @@ namespace GeometryPlay.View
                 "Минимальное количество ходов зависит от размера поля.");
         }
 
-        public void NotificationNoPlace(bool isReroll)
+        public void NotificationNoPlace(bool isRerolled)
         {
-            if (!isReroll)
+            if (!isRerolled)
             {
                 Console.WriteLine("Места не хватает. Производится перебросок кубика.\n" +
                     "Нажмите любую кнопку для повторного броска.");
@@ -136,6 +137,18 @@ namespace GeometryPlay.View
         public void ShowDeadHeat()
         {
             Console.WriteLine("Вышла ничья.");
+        }
+
+        public void NotificationRestartGame()
+        {
+            Console.WriteLine("Игра завершена. Играть снова?\n"
+                + "1. Да.\n"
+                + "2. Нет");
+        }
+
+        public void NotificationMadeStep()
+        {
+            Console.WriteLine("Ход сделан.");
         }
     }
 }

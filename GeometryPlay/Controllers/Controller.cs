@@ -10,10 +10,10 @@ namespace GeometryPlay.Controllers
 {
     public class Controller : IController
     {
-        private IView view = new ConsoleView();
-        private Player playerOne = new Player('X');
-        private Player playerTwo = new Player('O');
-        private Field field = new Field();
+        private readonly IView view = new ConsoleView();
+        private readonly Player playerOne = new Player('X');
+        private readonly Player playerTwo = new Player('O');
+        private readonly Field field = new Field();
 
         public void Run()
         {
@@ -27,41 +27,40 @@ namespace GeometryPlay.Controllers
 
             GameRecord();
 
-
+            RestartGame();
         }
 
-        private void GameRecord()
+        public void GameRecord()
         {
             int playerOneRecord = field.GetCountOfChars(playerOne.Symbol);
             view.ShowRecord(playerOne.Nickname, playerOneRecord);
             int playerTwoRecord = field.GetCountOfChars(playerTwo.Symbol);
             view.ShowRecord(playerTwo.Nickname, playerTwoRecord);
+
+            if (playerOneRecord == playerTwoRecord)
+            {
+                view.ShowDeadHeat();
+            }
+
             if (playerOneRecord > playerTwoRecord)
             {
                 view.ShowWinner(playerOne.Nickname);
             }
-            else if (playerTwoRecord < playerOneRecord)
+            else
             {
                 view.ShowWinner(playerTwo.Nickname);
             }
-            else
-            {
-
-            }
         }
 
-        private void SetGameSetting()
+        public void SetGameSetting()
         {
             view.NotificationEnteringFieldHWidth();
-
             EnterHeightOfField();
 
             view.NotificationEnteringFieldHeight();
-
             EnterWidthOfField();
 
             field.SetArraySize();
-
             field.FillEmptyArray();
 
             view.NotificationEnteringCountOfSteps(field.GetMinCountOfSteps());
@@ -69,21 +68,20 @@ namespace GeometryPlay.Controllers
             EnterCountOfSteps();
 
             view.NotificationEnteringFirstPlayerNickname();
-
             EnterPlayerNickname(playerOne);
 
             view.NotificationEnteringSecondPlayerNickname();
-
             EnterPlayerNickname(playerTwo);
         }
 
-        private void StartGame()
+        public void StartGame()
         {
             while(field.CountOfSteps != 0)
             {
                 Console.Clear();
                 view.ShowField(field.FieldArray);
                 SetPlayerTurn();
+
                 bool isSkipStep = Rolling(false);
                 if (!isSkipStep)
                 {
@@ -93,6 +91,8 @@ namespace GeometryPlay.Controllers
                 {
                     field.CountOfSteps--;
                 }
+
+                view.NotificationMadeStep();
                 Console.ReadKey();
             }
         }
@@ -108,12 +108,12 @@ namespace GeometryPlay.Controllers
             field.PlayerTurn.RollDice();
             view.ShowRoll(field.PlayerTurn.RollWidth, field.PlayerTurn.RollHight);
 
-            if (field.IsTherePlaceInField() == false && reroll == false)
+            if (!field.HavePlaceBool() && !reroll)
             {
                 view.NotificationNoPlace(reroll);
                 return Rolling(true);
             }
-            else if (field.IsTherePlaceInField() == false && reroll == true)
+            else if (!field.HavePlaceBool() && reroll)
             {
                 view.NotificationNoPlace(reroll);
                 return true;
@@ -129,8 +129,10 @@ namespace GeometryPlay.Controllers
         {
             view.NotificationEnterintCoordinateOfStepWidth();
             EnterCoordinateWidth();
+
             view.NotificationEnterintCoordinateOfStepHeight();
             EnterCoordinateHight();
+
             FillStep();
         }
 
@@ -138,7 +140,7 @@ namespace GeometryPlay.Controllers
         {
             try
             {
-                field.PlayerTurn.CoordinateWidth = Convert.ToInt32(Console.ReadLine());
+                field.PlayerTurn.CoordinateHeight = Convert.ToInt32(Console.ReadLine());
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -156,7 +158,7 @@ namespace GeometryPlay.Controllers
         {
             try
             {
-                field.PlayerTurn.CoordinateHight = Convert.ToInt32(Console.ReadLine());
+                field.PlayerTurn.CoordinateWidth = Convert.ToInt32(Console.ReadLine());
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -172,18 +174,21 @@ namespace GeometryPlay.Controllers
 
         private void FillStep()
         {
-            try
+            while (true)
             {
-                field.FillStepOfPlayer();
-            }
-            catch (Exception ex)
-            {
-                view.ShowErrorMessage(ex.Message);
-                view.NotificationEnterintCoordinateOfStepWidth();
-                EnterCoordinateWidth();
-                view.NotificationEnterintCoordinateOfStepHeight();
-                EnterCoordinateHight();
-                field.FillStepOfPlayer();
+                try
+                {
+                    field.FillStepOfPlayer();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    view.ShowErrorMessage(ex.Message);
+                    view.NotificationEnterintCoordinateOfStepWidth();
+                    EnterCoordinateWidth();
+                    view.NotificationEnterintCoordinateOfStepHeight();
+                    EnterCoordinateHight();
+                }
             }
         }
 
@@ -220,14 +225,18 @@ namespace GeometryPlay.Controllers
 
         public void EnterHeightOfField()
         {
-            try
+            bool tryAgain = true;
+            while (tryAgain)
             {
-                field.Height = Convert.ToInt32(Console.ReadLine());
-            }
-            catch(Exception ex)
-            {
-                view.ShowErrorMessage(ex.Message);
-                EnterHeightOfField();
+                try
+                {
+                    field.Width = Convert.ToInt32(Console.ReadLine());
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    view.ShowErrorMessage(ex.Message);
+                }
             }
         }
 
@@ -235,12 +244,13 @@ namespace GeometryPlay.Controllers
         {
             try
             {
-                field.Width = Convert.ToInt32(Console.ReadLine());
+                field.Height = Convert.ToInt32(Console.ReadLine());
             }
             catch (Exception ex)
             {
                 view.ShowErrorMessage(ex.Message);
                 EnterWidthOfField();
+                
             }
         }
 
@@ -248,7 +258,7 @@ namespace GeometryPlay.Controllers
         {
             try
             {
-                field.EnterStartCountOfSteps(Convert.ToInt32(Console.ReadLine()));
+                field.SetStartCountOfSteps(Convert.ToInt32(Console.ReadLine()));
                 playerOne.CountOfSteps = field.CountOfSteps / 2;
                 playerTwo.CountOfSteps = field.CountOfSteps / 2;
             }
@@ -259,6 +269,22 @@ namespace GeometryPlay.Controllers
             }
         }
 
-        
+        public void RestartGame()
+        {
+            view.NotificationRestartGame();
+            ConsoleKeyInfo button = Console.ReadKey();
+            if (button.Key == ConsoleKey.NumPad1 || button.KeyChar == '1')
+            {
+                Run();
+            }
+            else if (button.Key == ConsoleKey.NumPad2 || button.KeyChar == '2')
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                view.ShowErrorMessage("Такой кнопки нет.");
+            }
+        }
     }
 }

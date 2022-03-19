@@ -14,7 +14,7 @@ namespace GeometryPlay.View.Interface
 
         void NotificationEnteringCoorditaneOfStepHight();
 
-        void NotificationEnteringCountOfSteps(int countOfSteps);
+        void NotificationEnteringCountOfSteps(int minCountOfSteps);
 
         void NotificationEnteringFirstPlayerNickname();
 
@@ -24,7 +24,11 @@ namespace GeometryPlay.View.Interface
 
         void NotificationEnterintCoordinateOfStepHeight();
 
+        void NotificationMadeStep();
+
         void NotificationNoPlace(bool isRerolled);
+
+        void NotificationRestartGame();
 
         void SayHello();
 

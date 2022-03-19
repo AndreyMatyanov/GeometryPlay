@@ -7,5 +7,11 @@ namespace GeometryPlay.View.Controllers
     interface IController
     {
         void Run();
+
+        void SetGameSetting();
+
+        void StartGame();
+
+        void RestartGame();
     }
 }
