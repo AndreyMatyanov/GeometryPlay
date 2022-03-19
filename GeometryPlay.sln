@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeometryPlay", "GeometryPlay\GeometryPlay.csproj", "{084F6BEC-0DFF-4F01-A7B4-14E612487747}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{084F6BEC-0DFF-4F01-A7B4-14E612487747}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{084F6BEC-0DFF-4F01-A7B4-14E612487747}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{084F6BEC-0DFF-4F01-A7B4-14E612487747}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{084F6BEC-0DFF-4F01-A7B4-14E612487747}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B6B5474-E737-421D-91E7-BFFB2842B532}
+	EndGlobalSection
+EndGlobal
