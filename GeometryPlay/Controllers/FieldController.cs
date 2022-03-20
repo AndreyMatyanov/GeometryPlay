@@ -1,14 +1,12 @@
-﻿using GeometryPlay.Controllers.Interface;
+﻿using GeometryPlay.BLL.Interface;
 using GeometryPlay.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GeometryPlay.Controllers
 {
     class FieldController
     {
-        public FieldController(IFieldCreater fieldCreater, IFieldStepWorker worker, IFieldStepController stepController)
+        public FieldController(IFieldCreater fieldCreater, IFieldStepWorker worker, IFieldCountStepInitialization stepController)
         {
             FieldCreater = fieldCreater;
             StepWorker = worker;
@@ -18,7 +16,7 @@ namespace GeometryPlay.Controllers
         public Field Field { get; set; }
         public IFieldCreater FieldCreater { get; set; }
         public IFieldStepWorker StepWorker { get; set; }
-        public IFieldStepController StepController { get; set; }
+        public IFieldCountStepInitialization StepController { get; set; }
 
         public void SetSetings(int width, int height, int countOfSteps)
         {
@@ -28,16 +26,22 @@ namespace GeometryPlay.Controllers
 
         public void SetStep(int coordinateHeight, int coordinateWidth)
         {
-            if (coordinateHeight > Field.FieldArray.GetLength(0) || coordinateWidth > Field.FieldArray.GetLength(1) || coordinateWidth < 0 || coordinateHeight < 0)
+            if (coordinateHeight > Field.FieldArray.Length || coordinateWidth > Field.FieldArray[0].Length || coordinateWidth < 0 || coordinateHeight < 0)
             {
                 throw new ArgumentException("Введены некорректные координаты.");
             }
+
             StepWorker.FillStepOfPlayer(coordinateHeight - 1, coordinateWidth - 1, Field);
         }
 
         public void SetCountOfSteps(int count)
         {
             StepController.SetStartCountOfSteps(count, Field);
+        }
+
+        public Player GetPlayerTurn()
+        {
+            return Field.PlayerTurn;
         }
     }
 }

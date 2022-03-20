@@ -1,8 +1,8 @@
-﻿using GeometryPlay.Controllers.Interface;
+﻿using GeometryPlay.BLL.Interface;
 using GeometryPlay.Models;
 using System;
 
-namespace GeometryPlay.Controllers
+namespace GeometryPlay.BLL
 {
     internal class FieldCreater : IFieldCreater
     {
@@ -10,12 +10,13 @@ namespace GeometryPlay.Controllers
         {
             if (width >= 20 && height >= 30)
             {
-                char[,] field = new char[height, width];
-                for (var i = 0; i < field.GetLength(0); i++)
+                char[][] field = new char[height][];
+                for (var i = 0; i < field.Length; i++)
                 {
-                    for (var j = 0; j < field.GetLength(1); j++)
+                    field[i] = new char[width];
+                    for (var j = 0; j < field[i].Length; j++)
                     {
-                        field[i, j] = '-';
+                        field[i][j] = '-';
                     }
                 }
 
@@ -32,11 +33,11 @@ namespace GeometryPlay.Controllers
 
         public void FillEmptyArray(Field field)
         {
-            for (var i = 0; i < field.FieldArray.GetLength(0); i++)
+            for (var i = 0; i < field.FieldArray.Length; i++)
             {
-                for (var j = 0; j < field.FieldArray.GetLength(1); j++)
+                for (var j = 0; j < field.FieldArray[0].Length; j++)
                 {
-                    field.FieldArray[i, j] = '-';
+                    field.FieldArray[i][j] = '-';
                 }
             }
         }

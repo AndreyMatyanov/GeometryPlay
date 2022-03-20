@@ -1,5 +1,4 @@
-﻿
-namespace GeometryPlay.Controllers.Interface
+﻿namespace GeometryPlay.Controllers.Interface
 {
     interface IFieldController
     {

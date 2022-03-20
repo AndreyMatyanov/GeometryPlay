@@ -1,6 +1,6 @@
 ﻿using GeometryPlay.Models;
 
-namespace GeometryPlay.Controllers.Interface
+namespace GeometryPlay.BLL.Interface
 {
     interface IFieldCreater
     {

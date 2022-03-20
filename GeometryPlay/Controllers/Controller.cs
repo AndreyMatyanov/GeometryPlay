@@ -1,4 +1,5 @@
-﻿using GeometryPlay.Models;
+﻿using GeometryPlay.BLL;
+using GeometryPlay.Models;
 using GeometryPlay.View;
 using GeometryPlay.View.Controllers;
 using GeometryPlay.View.Interface;
@@ -9,20 +10,26 @@ namespace GeometryPlay.Controllers
     public class Controller : IController
     {
         private readonly IView view = new ConsoleView();
-        private readonly Player playerOne = new Player('X');
-        private readonly Player playerTwo = new Player('O');
+        private readonly Player playerOne = new Player();
+        private readonly Player playerTwo = new Player();
         private FieldController fieldController;
+        private PlayerController playerController;
 
         public void Run()
         {
             view.SayHello();
+
             view.ShowRules();
 
-            fieldController = new FieldController(new FieldCreater(), new FieldStepWorker(), new FieldStepController());
+            fieldController = new FieldController(new FieldCreater(), new FieldStepWorker(), new FieldCountStepInitialization());
+            playerController = new PlayerController(new PlayerCreater(), new PlayerRoll(), new PlayerRecords());
 
             Console.Clear();
+
             EnterGameSetting();
+
             EnterNickName();
+
             StartGame();
 
             GameRecord();
@@ -50,30 +57,28 @@ namespace GeometryPlay.Controllers
             catch (ArgumentException ex)
             {
                 view.ShowErrorMessage(ex.Message);
+
                 EnterGameSetting();
             }
         }
 
         public void EnterNickName()
         {
-            view.NotificationEnteringFirstPlayerNickname();
-            EnterPlayerNickname(playerOne);
-
-            view.NotificationEnteringSecondPlayerNickname();
-            EnterPlayerNickname(playerTwo);
-        }
-
-        private void EnterPlayerNickname(Player player)
-        {
             try
             {
-                player.Nickname = Console.ReadLine();
+                view.NotificationEnteringFirstPlayerNickname();
+                string firstPlayerNickname = Console.ReadLine();
+
+                view.NotificationEnteringSecondPlayerNickname();
+                string secondPlayerNickname = Console.ReadLine();
+                playerController.SetNickname(firstPlayerNickname, secondPlayerNickname);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 view.ShowErrorMessage(ex.Message);
-                EnterPlayerNickname(player);
+                EnterNickName();
             }
+
         }
 
         public void StartGame()
@@ -88,41 +93,35 @@ namespace GeometryPlay.Controllers
                 if (!isSkipStep)
                 {
                     EnterPlayerStep();
+                    view.NotificationMadeStep();
+                }
+                else if (fieldController.StepWorker.IsFullField(fieldController.Field))
+                {
+                    view.NotificationNoPlace();
+                    break;
                 }
                 else
                 {
                     fieldController.Field.CountOfSteps--;
                 }
 
-                view.NotificationMadeStep();
                 Console.ReadKey();
             }
         }
 
         private void SetPlayerTurn()
         {
-            fieldController.Field.PlayerTurn = PlayerTurn();
-            view.ShowPlayerTurn(fieldController.Field.PlayerTurn.Nickname);
+            playerController.PlayerRoll.SetPlayerTurn(fieldController.Field, playerController.PlayerOne, playerController.PlayerTwo);
+
+            view.ShowPlayerTurn(fieldController.GetPlayerTurn().Nickname);
         }
 
-        private Player PlayerTurn()
-        {
-            if (fieldController.Field.CountOfSteps % 2 == 0)
-            {
-                playerOne.CountOfSteps--;
-                return playerOne;
-            }
-            else
-            {
-                playerTwo.CountOfSteps--;
-                return playerTwo;
-            }
-        }
 
         private bool Rolling(bool reroll)
         {
-            fieldController.Field.PlayerTurn.RollDice();
-            view.ShowRoll(fieldController.Field.PlayerTurn.RollWidth, fieldController.Field.PlayerTurn.RollHeight);
+            playerController.SetRoll(fieldController.GetPlayerTurn());
+
+            view.ShowRoll(fieldController.GetPlayerTurn().RollWidth, fieldController.GetPlayerTurn().RollHeight);
 
             if (!fieldController.StepWorker.HavePlaceBool(fieldController.Field) && !reroll)
             {
@@ -160,31 +159,29 @@ namespace GeometryPlay.Controllers
             catch (Exception ex)
             {
                 view.ShowErrorMessage(ex.Message);
+
                 EnterPlayerStep();
             }
         }
 
         public void GameRecord()
         {
-            view.ShowRecord(playerOne, playerTwo);
-            if (playerOne.Record == playerTwo.Record)
+            view.ShowRecord(playerController.PlayerOne, playerController.PlayerTwo);
+            string winner = playerController.PlayerRecords.GetWinner(playerController.PlayerOne, playerController.PlayerTwo);
+            if (winner != string.Empty)
             {
-                view.ShowDeadHeat();
-            }
-
-            if (playerOne.Record > playerTwo.Record)
-            {
-                view.ShowWinner(playerOne.Nickname);
+                view.ShowWinner(winner);
             }
             else
             {
-                view.ShowWinner(playerTwo.Nickname);
+                view.ShowDeadHeat();
             }
         }
 
         public void RestartGame()
         {
             view.NotificationRestartGame();
+
             ConsoleKeyInfo button = Console.ReadKey();
             if (button.Key == ConsoleKey.NumPad1 || button.KeyChar == '1')
             {
@@ -197,6 +194,7 @@ namespace GeometryPlay.Controllers
             else
             {
                 view.ShowErrorMessage("Такой кнопки нет.");
+                RestartGame();
             }
         }
     }

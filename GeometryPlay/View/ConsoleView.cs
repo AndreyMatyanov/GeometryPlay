@@ -66,27 +66,27 @@ namespace GeometryPlay.View
             Console.WriteLine(message);
         }
 
-        public void ShowField(char[,] field)
+        public void ShowField(char[][] field)
         {
             Console.Write(" \t   ");
-            for (int i = 0; i < field.GetLength(1); i++)
+            for (int i = 0; i < field[0].Length; i++)
             {
                 Console.Write($"{i + 1}   ");
             }
             Console.WriteLine();
             Console.WriteLine();
-            for (int i = 0; i < field.GetLength(0); i++)
+            for (int i = 0; i < field.Length; i++)
             {
                 Console.Write($"{i + 1}\t");
-                for (var j = 0; j < field.GetLength(1); j++)
+                for (var j = 0; j < field[0].Length; j++)
                 {
                     if (j > 9)
                     {
-                        Console.Write("    " + field[i, j]);
+                        Console.Write("    " + field[i][j]);
                     }
                     else
                     {
-                        Console.Write("   " + field[i, j]);
+                        Console.Write("   " + field[i][j]);
                     }
                 }
                 Console.WriteLine();
@@ -154,6 +154,11 @@ namespace GeometryPlay.View
         public void NotificationMadeStep()
         {
             Console.WriteLine("Ход сделан.");
+        }
+
+        public void NotificationNoPlace()
+        {
+            Console.WriteLine("Место на поле закончилось.");
         }
     }
 }

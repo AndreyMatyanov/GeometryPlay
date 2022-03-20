@@ -1,19 +1,19 @@
-﻿using GeometryPlay.Controllers.Interface;
+﻿using GeometryPlay.BLL.Interface;
 using GeometryPlay.Models;
 using System;
 
-namespace GeometryPlay.Controllers
+namespace GeometryPlay.BLL
 {
     class FieldStepWorker : IFieldStepWorker
     {
         public bool HavePlaceBool(Field field)
         {
             bool result = false;
-            for (var j = 0; j <= field.FieldArray.GetLength(1) - field.PlayerTurn.RollWidth; j++)
+            for (var j = 0; j <= field.FieldArray[0].Length - field.PlayerTurn.RollWidth; j++)
             {
-                for (var i = 0; i <= field.FieldArray.GetLength(0) - field.PlayerTurn.RollHeight; i++)
+                for (var i = 0; i <= field.FieldArray.Length - field.PlayerTurn.RollHeight; i++)
                 {
-                    if (field.FieldArray[i, j] == '-')
+                    if (field.FieldArray[i][j] == '-')
                     {
                         result = IsFillPlaceBool(j, i, field);
                     }
@@ -37,7 +37,7 @@ namespace GeometryPlay.Controllers
             {
                 for (var j = coordinateHight; j < extremeDownPosition; j++)
                 {
-                    if (field.FieldArray[j, i] != '-')
+                    if (field.FieldArray[j][i] != '-')
                     {
                         return false;
                     }
@@ -61,12 +61,27 @@ namespace GeometryPlay.Controllers
             {
                 for (var j = coordinateWidth; j < extremeDownPosition; j++)
                 {
-                    field.FieldArray[i, j] = field.PlayerTurn.Symbol;
+                    field.FieldArray[i][j] = field.PlayerTurn.Symbol;
                 }
             }
 
             field.PlayerTurn.Record += field.PlayerTurn.RollWidth * field.PlayerTurn.RollHeight;
             field.CountOfSteps--;
+        }
+
+        public bool IsFullField(Field field)
+        {
+            for (int i = 0; i < field.FieldArray.Length; i++)
+            {
+                for (int j = 0; j < field.FieldArray[0].Length; j++)
+                {
+                    if (field.FieldArray[i][j] == '-')
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

@@ -1,22 +1,22 @@
-﻿using GeometryPlay.Controllers.Interface;
+﻿using GeometryPlay.BLL.Interface;
 using GeometryPlay.Models;
 using System;
 
-namespace GeometryPlay.Controllers
+namespace GeometryPlay.BLL
 {
-    class FieldStepController : IFieldStepController
+    class FieldCountStepInitialization : IFieldCountStepInitialization
     {
         public void SetStartCountOfSteps(int count, Field field)
         {
             int minCountOfSteps = GetMinCountOfSteps(field);
 
-            if (count < minCountOfSteps)
+            if (count >= minCountOfSteps)
             {
-                throw new ArgumentException($"Количество шагов не может быть меньше {minCountOfSteps}");
+                field.CountOfSteps = count;
             }
             else
             {
-                field.CountOfSteps = count;
+                throw new ArgumentException($"Количество шагов не может быть меньше {minCountOfSteps}");
             }
         }
 
@@ -29,7 +29,7 @@ namespace GeometryPlay.Controllers
         public int GetMinCountOfSteps(Field field)
         {
             const int minSteps = 20;
-            return minSteps * field.FieldArray.GetLength(0) * field.FieldArray.GetLength(1) / 600;
+            return minSteps * field.FieldArray.Length * field.FieldArray[0].Length / 600;
         }
     }
 }

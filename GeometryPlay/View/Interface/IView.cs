@@ -26,13 +26,15 @@ namespace GeometryPlay.View.Interface
 
         void NotificationNoPlace(bool isRerolled);
 
+        void NotificationNoPlace();
+
         void NotificationRestartGame();
 
         void SayHello();
 
         void ShowErrorMessage(string message);
 
-        void ShowField(char[,] field);
+        void ShowField(char[][] field);
 
         void ShowRoll(int height, int width);
 

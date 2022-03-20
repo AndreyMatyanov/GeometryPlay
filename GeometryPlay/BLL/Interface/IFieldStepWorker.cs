@@ -1,11 +1,11 @@
 ﻿using GeometryPlay.Models;
 
-namespace GeometryPlay.Controllers.Interface
+namespace GeometryPlay.BLL.Interface
 {
     interface IFieldStepWorker
     {
         bool HavePlaceBool(Field field);
-
         void FillStepOfPlayer(int coordinateHeight, int coordinateWidth, Field field);
+        bool IsFullField(Field field);
     }
 }
