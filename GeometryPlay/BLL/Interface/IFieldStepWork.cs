@@ -2,7 +2,7 @@
 
 namespace GeometryPlay.BLL.Interface
 {
-    interface IFieldStepWorker
+    interface IFieldStepWork
     {
         bool HavePlaceBool(Field field);
         void FillStepOfPlayer(int coordinateHeight, int coordinateWidth, Field field);

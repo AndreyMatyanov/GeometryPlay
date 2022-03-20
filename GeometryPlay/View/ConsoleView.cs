@@ -6,29 +6,9 @@ namespace GeometryPlay.View
 {
     class ConsoleView : IView
     {
-        public void NotificationEnteringCoorditaneOfStepHight()
-        {
-            Console.WriteLine("Введите координату по высоте:");
-        }
-
-        public void NotificationEnteringCoorditaneOfStepWidth()
-        {
-            Console.WriteLine("Введите координату по ширине:");
-        }
-
         public void NotificationEnteringCountOfSteps(int minCountOfSteps)
         {
             Console.WriteLine($"Введите количество ходов для одного игрока. Минимальное количество для данного поля - {minCountOfSteps}");
-        }
-
-        public void NotificationEnteringFieldHeight()
-        {
-            Console.WriteLine("Введите высоту поля:");
-        }
-
-        public void NotificationEnteringFieldHWidth()
-        {
-            Console.WriteLine("Введите ширину поля:");
         }
 
         public void NotificationEnteringFirstPlayerNickname()
@@ -43,12 +23,12 @@ namespace GeometryPlay.View
             Console.WriteLine("Введите nickname игрока 2:");
         }
 
-        public void NotificationEnterintCoordinateOfStepWidth()
+        public void NotificationEnteringCoordinateOfStepWidth()
         {
             Console.WriteLine("Введите координату по ширине:");
         }
 
-        public void NotificationEnterintCoordinateOfStepHeight()
+        public void NotificationEnteringCoordinateOfStepHeight()
         {
             Console.WriteLine("Введите координату по высоте:");
         }
@@ -108,7 +88,8 @@ namespace GeometryPlay.View
         {
             Console.Clear();
             Console.WriteLine("Правила игры:\n" +
-                "Минимальный размер: 20 на 30.\n" +
+                "Минимальный размер: 20 на 30. Зависит от количества шагов.\n" +
+                "Минимальное количество шагов: 20.\n"+
                 "Минимальное количество ходов зависит от размера поля.");
             Console.ReadKey();
         }
@@ -125,6 +106,10 @@ namespace GeometryPlay.View
             {
                 Console.WriteLine("Не повезло. Места нет. Пропуск хода!");
             }
+        }
+        public void NotificationNoPlace()
+        {
+            Console.WriteLine("Место на поле закончилось.");
         }
 
         public void ShowWinner(string name)
@@ -156,9 +141,5 @@ namespace GeometryPlay.View
             Console.WriteLine("Ход сделан.");
         }
 
-        public void NotificationNoPlace()
-        {
-            Console.WriteLine("Место на поле закончилось.");
-        }
     }
 }

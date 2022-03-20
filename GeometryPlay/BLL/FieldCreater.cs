@@ -6,39 +6,45 @@ namespace GeometryPlay.BLL
 {
     internal class FieldCreater : IFieldCreater
     {
-        public Field CreateField(int width, int height)
+        public Field CreateField(int width, 
+            int height, 
+            int counfOfSteps)
         {
-            if (width >= 20 && height >= 30)
-            {
-                char[][] field = new char[height][];
-                for (var i = 0; i < field.Length; i++)
-                {
-                    field[i] = new char[width];
-                    for (var j = 0; j < field[i].Length; j++)
-                    {
-                        field[i][j] = '-';
-                    }
-                }
+            char[][] field = new char[height][];
 
-                return new Field()
-                {
-                    FieldArray = field
-                };
-            }
-            else
+            for (var i = 0; i < field.Length; i++)
             {
-                throw new ArgumentException("Неверные данные о ширине и/или высоте. Минимальная ширина: 20. Максимальная высота: 30.");
+                field[i] = new char[width];
+
+                for (var j = 0; j < field[i].Length; j++)
+                {
+                    field[i][j] = '-';
+                }
             }
+
+            return new Field()
+            {
+                FieldArray = field,
+                CountOfSteps = counfOfSteps
+            };
         }
 
-        public void FillEmptyArray(Field field)
+        public Field ResizeField(int countOfSteps)
         {
-            for (var i = 0; i < field.FieldArray.Length; i++)
+            const int minHeight = 20;
+            const int minWidth = 30;
+            const int minCountOfSteps = 20;
+
+            double percentOfCountUpper = (double)countOfSteps / (double)minCountOfSteps;
+
+            if (percentOfCountUpper <= 2.3)
             {
-                for (var j = 0; j < field.FieldArray[0].Length; j++)
-                {
-                    field.FieldArray[i][j] = '-';
-                }
+                return CreateField((int)(percentOfCountUpper * minWidth), (int)(percentOfCountUpper * minHeight), countOfSteps);
+            }
+
+            else
+            {
+                throw new ArgumentException($"Слишком большая ширина. Максимальная ширина ввиду размеров консоли: {minWidth * 2.3}");
             }
         }
     }

@@ -21,7 +21,7 @@ namespace GeometryPlay.Controllers
 
             view.ShowRules();
 
-            fieldController = new FieldController(new FieldCreater(), new FieldStepWorker(), new FieldCountStepInitialization());
+            fieldController = new FieldController(new FieldCreater(), new FieldStepWork(), new FieldCountStepInitialization());
             playerController = new PlayerController(new PlayerCreater(), new PlayerRoll(), new PlayerRecords());
 
             Console.Clear();
@@ -41,18 +41,13 @@ namespace GeometryPlay.Controllers
         {
             try
             {
-                view.NotificationEnteringFieldHWidth();
-                int width = Convert.ToInt32(Console.ReadLine());
-
-                view.NotificationEnteringFieldHeight();
-                int height = Convert.ToInt32(Console.ReadLine());
-
-                view.NotificationEnteringCountOfSteps(fieldController.StepController.GetMinCountOfSteps(width, height));
+                view.NotificationEnteringCountOfSteps(20);
                 int countOfSteps = Convert.ToInt32(Console.ReadLine());
+
                 playerOne.CountOfSteps = countOfSteps / 2;
                 playerTwo.CountOfSteps = countOfSteps / 2;
 
-                fieldController.SetSetings(width, height, countOfSteps);
+                fieldController.SetSetings(countOfSteps);
             }
             catch (ArgumentException ex)
             {
@@ -71,11 +66,13 @@ namespace GeometryPlay.Controllers
 
                 view.NotificationEnteringSecondPlayerNickname();
                 string secondPlayerNickname = Console.ReadLine();
+
                 playerController.SetNickname(firstPlayerNickname, secondPlayerNickname);
             }
             catch (ArgumentException ex)
             {
                 view.ShowErrorMessage(ex.Message);
+
                 EnterNickName();
             }
 
@@ -86,18 +83,22 @@ namespace GeometryPlay.Controllers
             while(fieldController.Field.CountOfSteps != 0)
             {
                 Console.Clear();
+
                 view.ShowField(fieldController.Field.FieldArray);
+
                 SetPlayerTurn();
 
                 bool isSkipStep = Rolling(false);
                 if (!isSkipStep)
                 {
                     EnterPlayerStep();
+
                     view.NotificationMadeStep();
                 }
                 else if (fieldController.StepWorker.IsFullField(fieldController.Field))
                 {
                     view.NotificationNoPlace();
+
                     break;
                 }
                 else
@@ -143,10 +144,10 @@ namespace GeometryPlay.Controllers
         {
             try
             {
-                view.NotificationEnterintCoordinateOfStepWidth();
+                view.NotificationEnteringCoordinateOfStepWidth();
                 int coordinateWidth = Convert.ToInt32(Console.ReadLine());
 
-                view.NotificationEnterintCoordinateOfStepHeight();
+                view.NotificationEnteringCoordinateOfStepHeight();
                 int coordinateHeight = Convert.ToInt32(Console.ReadLine());
 
                 fieldController.SetStep(coordinateHeight, coordinateWidth);
@@ -194,6 +195,7 @@ namespace GeometryPlay.Controllers
             else
             {
                 view.ShowErrorMessage("Такой кнопки нет.");
+
                 RestartGame();
             }
         }

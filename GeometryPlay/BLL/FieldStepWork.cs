@@ -4,11 +4,12 @@ using System;
 
 namespace GeometryPlay.BLL
 {
-    class FieldStepWorker : IFieldStepWorker
+    class FieldStepWork : IFieldStepWork
     {
         public bool HavePlaceBool(Field field)
         {
             bool result = false;
+
             for (var j = 0; j <= field.FieldArray[0].Length - field.PlayerTurn.RollWidth; j++)
             {
                 for (var i = 0; i <= field.FieldArray.Length - field.PlayerTurn.RollHeight; i++)

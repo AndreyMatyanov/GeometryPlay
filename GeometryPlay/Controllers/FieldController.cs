@@ -6,7 +6,7 @@ namespace GeometryPlay.Controllers
 {
     class FieldController
     {
-        public FieldController(IFieldCreater fieldCreater, IFieldStepWorker worker, IFieldCountStepInitialization stepController)
+        public FieldController(IFieldCreater fieldCreater, IFieldStepWork worker, IFieldCountStepInitialization stepController)
         {
             FieldCreater = fieldCreater;
             StepWorker = worker;
@@ -15,13 +15,23 @@ namespace GeometryPlay.Controllers
 
         public Field Field { get; set; }
         public IFieldCreater FieldCreater { get; set; }
-        public IFieldStepWorker StepWorker { get; set; }
+        public IFieldStepWork StepWorker { get; set; }
         public IFieldCountStepInitialization StepController { get; set; }
 
-        public void SetSetings(int width, int height, int countOfSteps)
+        public void SetSetings(int countOfSteps)
         {
-            Field = FieldCreater.CreateField(width, height);
-            StepController.SetStartCountOfSteps(countOfSteps, Field);
+            Field = FieldCreater.CreateField(20, 30, 20);
+
+            if (countOfSteps >= 20)
+            {
+                StepController.SetStartCountOfSteps(countOfSteps, Field);
+
+                Field = FieldCreater.ResizeField(countOfSteps);
+            }
+            else
+            {
+                throw new ArgumentException("Введены некорректные данные.");
+            }
         }
 
         public void SetStep(int coordinateHeight, int coordinateWidth)
