@@ -1,10 +1,8 @@
-﻿using Geometry.Models;
+﻿using GeometryPlay.Models;
 using GeometryPlay.View;
 using GeometryPlay.View.Controllers;
 using GeometryPlay.View.Interface;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GeometryPlay.Controllers
 {
@@ -13,16 +11,18 @@ namespace GeometryPlay.Controllers
         private readonly IView view = new ConsoleView();
         private readonly Player playerOne = new Player('X');
         private readonly Player playerTwo = new Player('O');
-        private readonly Field field = new Field();
+        private FieldController fieldController;
 
         public void Run()
         {
             view.SayHello();
-
             view.ShowRules();
 
-            SetGameSetting();
+            fieldController = new FieldController(new FieldCreater(), new FieldStepWorker(), new FieldStepController());
 
+            Console.Clear();
+            EnterGameSetting();
+            EnterNickName();
             StartGame();
 
             GameRecord();
@@ -30,166 +30,37 @@ namespace GeometryPlay.Controllers
             RestartGame();
         }
 
-        public void GameRecord()
+        public void EnterGameSetting()
         {
-            int playerOneRecord = field.GetCountOfChars(playerOne.Symbol);
-            view.ShowRecord(playerOne.Nickname, playerOneRecord);
-            int playerTwoRecord = field.GetCountOfChars(playerTwo.Symbol);
-            view.ShowRecord(playerTwo.Nickname, playerTwoRecord);
+            try
+            {
+                view.NotificationEnteringFieldHWidth();
+                int width = Convert.ToInt32(Console.ReadLine());
 
-            if (playerOneRecord == playerTwoRecord)
-            {
-                view.ShowDeadHeat();
-            }
+                view.NotificationEnteringFieldHeight();
+                int height = Convert.ToInt32(Console.ReadLine());
 
-            if (playerOneRecord > playerTwoRecord)
-            {
-                view.ShowWinner(playerOne.Nickname);
+                view.NotificationEnteringCountOfSteps(fieldController.StepController.GetMinCountOfSteps(width, height));
+                int countOfSteps = Convert.ToInt32(Console.ReadLine());
+                playerOne.CountOfSteps = countOfSteps / 2;
+                playerTwo.CountOfSteps = countOfSteps / 2;
+
+                fieldController.SetSetings(width, height, countOfSteps);
             }
-            else
+            catch (ArgumentException ex)
             {
-                view.ShowWinner(playerTwo.Nickname);
+                view.ShowErrorMessage(ex.Message);
+                EnterGameSetting();
             }
         }
 
-        public void SetGameSetting()
+        public void EnterNickName()
         {
-            view.NotificationEnteringFieldHWidth();
-            EnterHeightOfField();
-
-            view.NotificationEnteringFieldHeight();
-            EnterWidthOfField();
-
-            field.SetArraySize();
-            field.FillEmptyArray();
-
-            view.NotificationEnteringCountOfSteps(field.GetMinCountOfSteps());
-
-            EnterCountOfSteps();
-
             view.NotificationEnteringFirstPlayerNickname();
             EnterPlayerNickname(playerOne);
 
             view.NotificationEnteringSecondPlayerNickname();
             EnterPlayerNickname(playerTwo);
-        }
-
-        public void StartGame()
-        {
-            while(field.CountOfSteps != 0)
-            {
-                Console.Clear();
-                view.ShowField(field.FieldArray);
-                SetPlayerTurn();
-
-                bool isSkipStep = Rolling(false);
-                if (!isSkipStep)
-                {
-                    SetPlayerStep();
-                }
-                else
-                {
-                    field.CountOfSteps--;
-                }
-
-                view.NotificationMadeStep();
-                Console.ReadKey();
-            }
-        }
-
-        private void SetPlayerTurn()
-        {
-            field.PlayerTurn = PlayerTurn();
-            view.ShowPlayerTurn(field.PlayerTurn.Nickname);
-        }
-
-        private bool Rolling(bool reroll)
-        {
-            field.PlayerTurn.RollDice();
-            view.ShowRoll(field.PlayerTurn.RollWidth, field.PlayerTurn.RollHight);
-
-            if (!field.HavePlaceBool() && !reroll)
-            {
-                view.NotificationNoPlace(reroll);
-                return Rolling(true);
-            }
-            else if (!field.HavePlaceBool() && reroll)
-            {
-                view.NotificationNoPlace(reroll);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
-
-        private void SetPlayerStep()
-        {
-            view.NotificationEnterintCoordinateOfStepWidth();
-            EnterCoordinateWidth();
-
-            view.NotificationEnterintCoordinateOfStepHeight();
-            EnterCoordinateHight();
-
-            FillStep();
-        }
-
-        private void EnterCoordinateWidth()
-        {
-            try
-            {
-                field.PlayerTurn.CoordinateHeight = Convert.ToInt32(Console.ReadLine());
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                view.ShowErrorMessage("Ваш ход вышел за рамки поля.");
-                EnterCoordinateWidth();
-            }
-            catch(Exception ex)
-            {
-                view.ShowErrorMessage(ex.Message);
-                EnterCoordinateWidth();
-            }
-        }
-
-        private void EnterCoordinateHight()
-        {
-            try
-            {
-                field.PlayerTurn.CoordinateWidth = Convert.ToInt32(Console.ReadLine());
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                view.ShowErrorMessage("Ваш ход вышел за рамки поля.");
-                EnterCoordinateHight();
-            }
-            catch (Exception ex)
-            {
-                view.ShowErrorMessage(ex.Message);
-                EnterCoordinateWidth();
-            }
-        }
-
-        private void FillStep()
-        {
-            while (true)
-            {
-                try
-                {
-                    field.FillStepOfPlayer();
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    view.ShowErrorMessage(ex.Message);
-                    view.NotificationEnterintCoordinateOfStepWidth();
-                    EnterCoordinateWidth();
-                    view.NotificationEnterintCoordinateOfStepHeight();
-                    EnterCoordinateHight();
-                }
-            }
         }
 
         private void EnterPlayerNickname(Player player)
@@ -205,67 +76,109 @@ namespace GeometryPlay.Controllers
             }
         }
 
+        public void StartGame()
+        {
+            while(fieldController.Field.CountOfSteps != 0)
+            {
+                Console.Clear();
+                view.ShowField(fieldController.Field.FieldArray);
+                SetPlayerTurn();
+
+                bool isSkipStep = Rolling(false);
+                if (!isSkipStep)
+                {
+                    EnterPlayerStep();
+                }
+                else
+                {
+                    fieldController.Field.CountOfSteps--;
+                }
+
+                view.NotificationMadeStep();
+                Console.ReadKey();
+            }
+        }
+
+        private void SetPlayerTurn()
+        {
+            fieldController.Field.PlayerTurn = PlayerTurn();
+            view.ShowPlayerTurn(fieldController.Field.PlayerTurn.Nickname);
+        }
+
         private Player PlayerTurn()
         {
-            if (field.CountOfSteps % 2 == 0)
+            if (fieldController.Field.CountOfSteps % 2 == 0)
             {
-                playerOne.IsPlayerTurn = true;
-                playerTwo.IsPlayerTurn = false;
                 playerOne.CountOfSteps--;
                 return playerOne;
             }
             else
             {
-                playerTwo.IsPlayerTurn = true;
-                playerOne.IsPlayerTurn = false;
                 playerTwo.CountOfSteps--;
                 return playerTwo;
             }
         }
 
-        public void EnterHeightOfField()
+        private bool Rolling(bool reroll)
         {
-            bool tryAgain = true;
-            while (tryAgain)
+            fieldController.Field.PlayerTurn.RollDice();
+            view.ShowRoll(fieldController.Field.PlayerTurn.RollWidth, fieldController.Field.PlayerTurn.RollHeight);
+
+            if (!fieldController.StepWorker.HavePlaceBool(fieldController.Field) && !reroll)
             {
-                try
-                {
-                    field.Width = Convert.ToInt32(Console.ReadLine());
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    view.ShowErrorMessage(ex.Message);
-                }
+                view.NotificationNoPlace(reroll);
+                return Rolling(true);
+            }
+            else if (!fieldController.StepWorker.HavePlaceBool(fieldController.Field) && reroll)
+            {
+                view.NotificationNoPlace(reroll);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
-        public void EnterWidthOfField()
+        private void EnterPlayerStep()
         {
             try
             {
-                field.Height = Convert.ToInt32(Console.ReadLine());
+                view.NotificationEnterintCoordinateOfStepWidth();
+                int coordinateWidth = Convert.ToInt32(Console.ReadLine());
+
+                view.NotificationEnterintCoordinateOfStepHeight();
+                int coordinateHeight = Convert.ToInt32(Console.ReadLine());
+
+                fieldController.SetStep(coordinateHeight, coordinateWidth);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                view.ShowErrorMessage("Ваш ход вышел за рамки поля.");
+                EnterPlayerStep();
             }
             catch (Exception ex)
             {
                 view.ShowErrorMessage(ex.Message);
-                EnterWidthOfField();
-                
+                EnterPlayerStep();
             }
         }
 
-        public void EnterCountOfSteps()
+        public void GameRecord()
         {
-            try
+            view.ShowRecord(playerOne, playerTwo);
+            if (playerOne.Record == playerTwo.Record)
             {
-                field.SetStartCountOfSteps(Convert.ToInt32(Console.ReadLine()));
-                playerOne.CountOfSteps = field.CountOfSteps / 2;
-                playerTwo.CountOfSteps = field.CountOfSteps / 2;
+                view.ShowDeadHeat();
             }
-            catch (Exception ex)
+
+            if (playerOne.Record > playerTwo.Record)
             {
-                view.ShowErrorMessage(ex.Message);
-                EnterCountOfSteps();
+                view.ShowWinner(playerOne.Nickname);
+            }
+            else
+            {
+                view.ShowWinner(playerTwo.Nickname);
             }
         }
 

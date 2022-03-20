@@ -1,11 +1,10 @@
-﻿using GeometryPlay.View.Interface;
+﻿using GeometryPlay.Models;
+using GeometryPlay.View.Interface;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GeometryPlay.View
 {
-    public class ConsoleView : IView
+    class ConsoleView : IView
     {
         public void NotificationEnteringCoorditaneOfStepHight()
         {
@@ -34,11 +33,13 @@ namespace GeometryPlay.View
 
         public void NotificationEnteringFirstPlayerNickname()
         {
+            Console.Clear();
             Console.WriteLine("Введите nickname игрока 1:");
         }
 
         public void NotificationEnteringSecondPlayerNickname()
         {
+            Console.Clear();
             Console.WriteLine("Введите nickname игрока 2:");
         }
 
@@ -105,9 +106,11 @@ namespace GeometryPlay.View
 
         public void ShowRules()
         {
+            Console.Clear();
             Console.WriteLine("Правила игры:\n" +
                 "Минимальный размер: 20 на 30.\n" +
                 "Минимальное количество ходов зависит от размера поля.");
+            Console.ReadKey();
         }
 
         public void NotificationNoPlace(bool isRerolled)
@@ -129,9 +132,11 @@ namespace GeometryPlay.View
             Console.WriteLine($"Победитель: {name}");
         }
 
-        public void ShowRecord(string name, int record)
+        public void ShowRecord(Player playerOne, Player playerTwo)
         {
-            Console.WriteLine($"Площадь фигур игрока {name}: {record}");
+            Console.Clear();
+            Console.WriteLine($"Площадь фигур игрока {playerOne.Nickname}: {playerOne.Record}");
+            Console.WriteLine($"Площадь фигур игрока {playerTwo.Nickname}: {playerTwo.Record}");
         }
 
         public void ShowDeadHeat()

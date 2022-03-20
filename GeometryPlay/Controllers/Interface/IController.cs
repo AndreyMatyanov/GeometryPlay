@@ -8,7 +8,7 @@ namespace GeometryPlay.View.Controllers
     {
         void Run();
 
-        void SetGameSetting();
+        void EnterGameSetting();
 
         void StartGame();
 

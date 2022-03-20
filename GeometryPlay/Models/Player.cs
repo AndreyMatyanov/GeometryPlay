@@ -1,59 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Geometry.Models
+namespace GeometryPlay.Models
 {
-    internal class Player
+    class Player
     {
         private string nickname;
         private readonly char symbol;
         private int rollHeight;
         private int rollWidth;
-        private int coordinateHeight;
-        private int coordinateWidth;
         readonly Random rollRandom = new Random();
 
         public Player(char symbol)
         {
             this.symbol = symbol;
-        }
-        public int CoordinateHeight
-        {
-            get 
-            {
-                return coordinateHeight;
-            }
-            set 
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("Значение не может быть отрицательным.");
-                }
-                else
-                {
-                    coordinateHeight = value - 1;
-                }
-            }
-        }
-
-        public int CoordinateWidth
-        {
-            get
-            {
-                return coordinateWidth;
-            }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("Значение не может быть отрицательным.");
-                }
-                else
-                {
-                    coordinateWidth = value  - 1;
-                }
-            }
         }
 
         public int CountOfSteps { get; set; }
@@ -83,7 +42,9 @@ namespace Geometry.Models
 
         public int RollWidth => rollHeight;
 
-        public int RollHight => rollWidth;
+        public int RollHeight => rollWidth;
+
+        public int Record { get; set; }
 
         public char Symbol => symbol;
 

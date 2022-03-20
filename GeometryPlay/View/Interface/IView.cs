@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GeometryPlay.Models;
 
 namespace GeometryPlay.View.Interface
 {
@@ -38,7 +36,7 @@ namespace GeometryPlay.View.Interface
 
         void ShowRoll(int height, int width);
 
-        void ShowRecord(string name, int record);
+        void ShowRecord(Player playerOne, Player playerTwo);
 
         void ShowRules();
 
