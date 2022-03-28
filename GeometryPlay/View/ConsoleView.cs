@@ -1,53 +1,34 @@
-﻿using GeometryPlay.View.Interface;
+﻿using GeometryPlay.Models;
+using GeometryPlay.View.Interface;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GeometryPlay.View
 {
-    public class ConsoleView : IView
+    class ConsoleView : IView
     {
-        public void NotificationEnteringCoorditaneOfStepHight()
-        {
-            Console.WriteLine("Введите координату по высоте:");
-        }
-
-        public void NotificationEnteringCoorditaneOfStepWidth()
-        {
-            Console.WriteLine("Введите координату по ширине:");
-        }
-
         public void NotificationEnteringCountOfSteps(int minCountOfSteps)
         {
             Console.WriteLine($"Введите количество ходов для одного игрока. Минимальное количество для данного поля - {minCountOfSteps}");
         }
 
-        public void NotificationEnteringFieldHeight()
-        {
-            Console.WriteLine("Введите высоту поля:");
-        }
-
-        public void NotificationEnteringFieldHWidth()
-        {
-            Console.WriteLine("Введите ширину поля:");
-        }
-
         public void NotificationEnteringFirstPlayerNickname()
         {
+            Console.Clear();
             Console.WriteLine("Введите nickname игрока 1:");
         }
 
         public void NotificationEnteringSecondPlayerNickname()
         {
+            Console.Clear();
             Console.WriteLine("Введите nickname игрока 2:");
         }
 
-        public void NotificationEnterintCoordinateOfStepWidth()
+        public void NotificationEnteringCoordinateOfStepWidth()
         {
             Console.WriteLine("Введите координату по ширине:");
         }
 
-        public void NotificationEnterintCoordinateOfStepHeight()
+        public void NotificationEnteringCoordinateOfStepHeight()
         {
             Console.WriteLine("Введите координату по высоте:");
         }
@@ -65,27 +46,27 @@ namespace GeometryPlay.View
             Console.WriteLine(message);
         }
 
-        public void ShowField(char[,] field)
+        public void ShowField(char[][] field)
         {
             Console.Write(" \t   ");
-            for (int i = 0; i < field.GetLength(1); i++)
+            for (int i = 0; i < field[0].Length; i++)
             {
                 Console.Write($"{i + 1}   ");
             }
             Console.WriteLine();
             Console.WriteLine();
-            for (int i = 0; i < field.GetLength(0); i++)
+            for (int i = 0; i < field.Length; i++)
             {
                 Console.Write($"{i + 1}\t");
-                for (var j = 0; j < field.GetLength(1); j++)
+                for (var j = 0; j < field[0].Length; j++)
                 {
                     if (j > 9)
                     {
-                        Console.Write("    " + field[i, j]);
+                        Console.Write("    " + field[i][j]);
                     }
                     else
                     {
-                        Console.Write("   " + field[i, j]);
+                        Console.Write("   " + field[i][j]);
                     }
                 }
                 Console.WriteLine();
@@ -105,9 +86,12 @@ namespace GeometryPlay.View
 
         public void ShowRules()
         {
+            Console.Clear();
             Console.WriteLine("Правила игры:\n" +
-                "Минимальный размер: 20 на 30.\n" +
+                "Минимальный размер: 20 на 30. Зависит от количества шагов.\n" +
+                "Минимальное количество шагов: 20.\n"+
                 "Минимальное количество ходов зависит от размера поля.");
+            Console.ReadKey();
         }
 
         public void NotificationNoPlace(bool isRerolled)
@@ -123,15 +107,21 @@ namespace GeometryPlay.View
                 Console.WriteLine("Не повезло. Места нет. Пропуск хода!");
             }
         }
+        public void NotificationNoPlace()
+        {
+            Console.WriteLine("Место на поле закончилось.");
+        }
 
         public void ShowWinner(string name)
         {
             Console.WriteLine($"Победитель: {name}");
         }
 
-        public void ShowRecord(string name, int record)
+        public void ShowRecord(Player playerOne, Player playerTwo)
         {
-            Console.WriteLine($"Площадь фигур игрока {name}: {record}");
+            Console.Clear();
+            Console.WriteLine($"Площадь фигур игрока {playerOne.Nickname}: {playerOne.Record}");
+            Console.WriteLine($"Площадь фигур игрока {playerTwo.Nickname}: {playerTwo.Record}");
         }
 
         public void ShowDeadHeat()
@@ -150,5 +140,6 @@ namespace GeometryPlay.View
         {
             Console.WriteLine("Ход сделан.");
         }
+
     }
 }
